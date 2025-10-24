@@ -1,1 +1,1 @@
-<h1 align="center">SISTEMA DE GESTIÓN UNIVERSITARIO</h1>
+<h1 align="center">Portafolio Digital ITSa</h1>
