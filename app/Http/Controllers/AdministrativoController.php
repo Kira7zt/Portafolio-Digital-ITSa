@@ -16,10 +16,12 @@ class AdministrativoController extends Controller
 
 public function index()
 {
-    // Carga los Administrativos, y optimiza cargando sus relaciones de usuario y roles.
     $administrativos = Administrativo::with('usuario.roles')->get();
 
-    return view('admin.administrativos.index', compact('administrativos')); 
+    // Traer usuarios que NO tengan un administrativo asociado
+    $usuariosExtra = User::whereDoesntHave('administrativo')->with('roles')->get();
+
+    return view('admin.administrativos.index', compact('administrativos', 'usuariosExtra'));
 }
 
     /**

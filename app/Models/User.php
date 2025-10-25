@@ -50,7 +50,7 @@ class User extends Authenticatable
 
     public function administrativo()
 {
-    return $this->hasOne(Administrativo::class);
+    return $this->hasOne(Administrativo::class, 'usuario_id');
 }
     public function adminlte_image()
     {

@@ -37,55 +37,57 @@
                         </thead>
                         <tbody>
                         @php
-                            $contador = 1;
-                        @endphp
-                        @foreach($administrativos as $administrativo)
-                            <tr>
-                                <td style="text-align: center">{{$contador++}}</td>
-                                <td style="text-align: center">{{$administrativo->usuario->roles->pluck('name')->implode(', ')}}</td>
-                                <td style="text-align: center">{{$administrativo->nombre}}</td>
-                                <td style="text-align: center">{{$administrativo->apellido}}</td>
-                                <td style="text-align: center">{{$administrativo->ci}}</td>
-                                <td style="text-align: center">{{$administrativo->telefono}}</td>
-                                <td style="text-align: center">{{$administrativo->usuario->email}}</td>
-                                <td style="text-align: center">{{$administrativo->direccion}}</td>
-                                <td style="text-align: center">{{$administrativo->profesion}}</td>
-                                    
-                                <td style="text-align: center">
-                                    <div class="btn-group" role="group" aria-label="Basic example">
+    $contador = 1;
+@endphp
 
-                                        <a href="{{url('/admin/administrativos/'.$administrativo->id)}}" class="btn btn-info btn-sm"><i class="fas fa-eye"></i></a>
-                                        <a href="{{url('/admin/administrativos/'.$administrativo->id.'/edit')}}" class="btn btn-success btn-sm"><i class="fas fa-pencil-alt"></i></a>
-                                        <form action="{{url('/admin/administrativos',$administrativo->id)}}" method="post"
-                                              onclick="preguntar{{$administrativo->id}}(event)" id="miFormulario{{$administrativo->id}}">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
-                                        </form>
-                                        <script>
-                                            function preguntar{{$administrativo->id}}(event) {
-                                                event.preventDefault();
-                                                Swal.fire({
-                                                    title: '¿Desea eliminar esta registro?',
-                                                    text: '',
-                                                    icon: 'question',
-                                                    showDenyButton: true,
-                                                    confirmButtonText: 'Eliminar',
-                                                    confirmButtonColor: '#a5161d',
-                                                    denyButtonColor: '#270a0a',
-                                                    denyButtonText: 'Cancelar',
-                                                }).then((result) => {
-                                                    if (result.isConfirmed) {
-                                                        var form = $('#miFormulario{{$administrativo->id}}');
-                                                        form.submit();
-                                                    }
-                                                });
-                                            }
-                                        </script>
-                                    </div>
-                                </td>
-                            </tr>
-                        @endforeach
+{{-- Mostrar administrativos --}}
+@foreach($administrativos as $administrativo)
+    <tr>
+        <td style="text-align: center">{{$contador++}}</td>
+        <td style="text-align: center">{{$administrativo->usuario->roles->pluck('name')->implode(', ')}}</td>
+        <td style="text-align: center">{{$administrativo->nombre}}</td>
+        <td style="text-align: center">{{$administrativo->apellido}}</td>
+        <td style="text-align: center">{{$administrativo->ci}}</td>
+        <td style="text-align: center">{{$administrativo->telefono}}</td>
+        <td style="text-align: center">{{$administrativo->usuario->email}}</td>
+        <td style="text-align: center">{{$administrativo->direccion}}</td>
+        <td style="text-align: center">{{$administrativo->profesion}}</td>
+        <td style="text-align: center">
+            <div class="btn-group" role="group" aria-label="Basic example">
+                <a href="{{url('/admin/administrativos/'.$administrativo->id)}}" class="btn btn-info btn-sm"><i class="fas fa-eye"></i></a>
+                <a href="{{url('/admin/administrativos/'.$administrativo->id.'/edit')}}" class="btn btn-success btn-sm"><i class="fas fa-pencil-alt"></i></a>
+                <form action="{{url('/admin/administrativos',$administrativo->id)}}" method="post"
+                      onclick="preguntar{{$administrativo->id}}(event)" id="miFormulario{{$administrativo->id}}">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
+                </form>
+            </div>
+        </td>
+    </tr>
+@endforeach
+
+{{-- Mostrar usuarios que NO son administrativos (ej: estudiantes) --}}
+@foreach($usuariosExtra as $usuario)
+    <tr>
+        <td style="text-align: center">{{$contador++}}</td>
+        <td style="text-align: center">{{$usuario->roles->pluck('name')->implode(', ')}}</td>
+        <td style="text-align: center">{{$usuario->name}}</td>
+        <td style="text-align: center">-</td>
+        <td style="text-align: center">-</td>
+        <td style="text-align: center">-</td>
+        <td style="text-align: center">{{$usuario->email}}</td>
+        <td style="text-align: center">-</td>
+        <td style="text-align: center">-</td>
+        <td style="text-align: center">
+            <div class="btn-group" role="group" aria-label="Basic example">
+                {{-- Solo vista para estudiantes, sin editar/eliminar administrativos --}}
+                <a href="#" class="btn btn-info btn-sm"><i class="fas fa-eye"></i></a>
+            </div>
+        </td>
+    </tr>
+@endforeach
+
                         </tbody>
                     </table>
                 </div>

@@ -6,6 +6,7 @@ use App\Models\Carrera;
 use App\Models\Materia;
 use App\Models\Administrativo;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class MateriaController extends Controller
 {
@@ -21,16 +22,21 @@ class MateriaController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
-    {
-        $carreras = Carrera::all();
-        
-    // Traemos los administrativos que sean docentes
-            $docentes = Administrativo::where('profesion', 'like', '%docente%')->get();
+public function create()
+{
+    $carreras = Carrera::all();
 
-        return view('admin.materias.create', compact ('carreras'));
-    }
+    // Filtra solo los administrativos cuyo usuario tiene el rol "Docente"
+    $docentes = DB::table('administrativos')
+        ->join('users', 'administrativos.usuario_id', '=', 'users.id')
+        ->join('model_has_roles', 'users.id', '=', 'model_has_roles.model_id')
+        ->join('roles', 'model_has_roles.role_id', '=', 'roles.id')
+        ->where('roles.name', 'Docente')
+        ->select('administrativos.id', 'administrativos.nombre', 'administrativos.apellido')
+        ->get();
 
+    return view('admin.materias.create', compact('carreras', 'docentes'));
+}
     /**
      * Store a newly created resource in storage.
      */
@@ -38,8 +44,11 @@ class MateriaController extends Controller
     {
         $request->validate([
             'carrera_id' => 'required|exists:carreras,id',
+            'docente_id' => 'required|exists:administrativos,id',
             'nombre'     => 'required|string|max:255',
             'codigo'     => 'required|string|max:50',
+            'anio' => 'required|string|max:50',
+
         ]);
 
         Materia::create($request->all());
@@ -61,12 +70,22 @@ class MateriaController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit( $id)
-    {
-        $materia = Materia::find($id);
-        $carreras = Carrera::all();
-        return view('admin.materias.edit', compact('materia','carreras'));
-    }
+public function edit($id)
+{
+    $materia = Materia::findOrFail($id);
+    $carreras = Carrera::all();
+
+    // Traemos solo los administrativos que tienen el rol "Docente"
+    $docentes = DB::table('administrativos')
+        ->join('users', 'administrativos.usuario_id', '=', 'users.id')
+        ->join('model_has_roles', 'users.id', '=', 'model_has_roles.model_id')
+        ->join('roles', 'model_has_roles.role_id', '=', 'roles.id')
+        ->where('roles.name', 'Docente')
+        ->select('administrativos.id', 'administrativos.nombre', 'administrativos.apellido')
+        ->get();
+
+    return view('admin.materias.edit', compact('materia', 'carreras', 'docentes'));
+}
 
     /**
      * Update the specified resource in storage.
@@ -75,12 +94,14 @@ class MateriaController extends Controller
     {
         $request->validate([
             'carrera_id' => 'required|exists:carreras,id',
+            'docente_id' => 'required|exists:administrativos,id',
             'nombre'     => 'required|string|max:255',
             'codigo'     => 'required|string|max:50',
+            'anio' => 'required|string|max:50',
         ]);
 
         $materia = Materia::findOrFail($id);
-        $materia->update($request->all());
+        $materia->update($request->only(['nombre','codigo','carrera_id','docente_id','anio']));
 
         return redirect()->route('admin.materias.index')
             ->with('mensaje', 'Materia actualizada correctamente')

@@ -34,47 +34,60 @@
                         </thead>
                         <tbody>
                         @php
-                            $contador = 1;
-                        @endphp
-                        @foreach($materias as $materia)
-                            <tr>
-                                <td style="text-align: center">{{$contador++}}</td>
-                                <td>{{$materia->carrera->nombre}}</td>
-                                <td>{{$materia->nombre}}</td>
-                                <td>{{$materia->codigo}}</td>
-                                <td style="text-align: center">
-                                    <div class="btn-group" role="group" aria-label="Basic example">
-                                        <a href="{{url('/admin/materias/'.$materia->id.'/edit')}}" class="btn btn-success btn-sm"><i class="fas fa-pencil-alt"></i></a>
-                                        <form action="{{url('/admin/materias',$materia->id)}}" method="post"
-                                              onclick="preguntar{{$materia->id}}(event)" id="miFormulario{{$materia->id}}">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
-                                        </form>
-                                        <script>
-                                            function preguntar{{$materia->id}}(event) {
-                                                event.preventDefault();
-                                                Swal.fire({
-                                                    title: '¿Desea eliminar esta registro?',
-                                                    text: '',
-                                                    icon: 'question',
-                                                    showDenyButton: true,
-                                                    confirmButtonText: 'Eliminar',
-                                                    confirmButtonColor: '#a5161d',
-                                                    denyButtonColor: '#270a0a',
-                                                    denyButtonText: 'Cancelar',
-                                                }).then((result) => {
-                                                    if (result.isConfirmed) {
-                                                        var form = $('#miFormulario{{$materia->id}}');
-                                                        form.submit();
-                                                    }
-                                                });
-                                            }
-                                        </script>
-                                    </div>
-                                </td>
-                            </tr>
-                        @endforeach
+    $contador = 1;
+@endphp
+@foreach($materias as $materia)
+    <tr>
+        <td style="text-align: center">{{ $contador++ }}</td>
+        <td>{{ $materia->carrera->nombre }}</td>
+        <td>
+            @if($materia->docente)
+                {{ $materia->docente->nombre }} {{ $materia->docente->apellido }}
+            @else
+                <span class="text-muted">Sin asignar</span>
+            @endif
+        </td>
+        <td>{{ $materia->nombre }}</td>
+        <td>{{ $materia->codigo }}</td>
+        <td style="text-align: center">{{ $materia->anio ?? '—' }}</td>
+        <td style="text-align: center">
+            <div class="btn-group" role="group" aria-label="Basic example">
+                <a href="{{ url('/admin/materias/'.$materia->id.'/edit') }}" class="btn btn-success btn-sm">
+                    <i class="fas fa-pencil-alt"></i>
+                </a>
+                <form action="{{ url('/admin/materias', $materia->id) }}" method="post"
+                      onclick="preguntar{{ $materia->id }}(event)" id="miFormulario{{ $materia->id }}">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="btn btn-danger btn-sm">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </form>
+                <script>
+                    function preguntar{{ $materia->id }}(event) {
+                        event.preventDefault();
+                        Swal.fire({
+                            title: '¿Desea eliminar este registro?',
+                            text: '',
+                            icon: 'question',
+                            showDenyButton: true,
+                            confirmButtonText: 'Eliminar',
+                            confirmButtonColor: '#a5161d',
+                            denyButtonColor: '#270a0a',
+                            denyButtonText: 'Cancelar',
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                var form = $('#miFormulario{{ $materia->id }}');
+                                form.submit();
+                            }
+                        });
+                    }
+                </script>
+            </div>
+        </td>
+    </tr>
+@endforeach
+
                         </tbody>
                     </table>
                 </div>

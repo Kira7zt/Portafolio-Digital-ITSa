@@ -11,7 +11,7 @@
         <div class="col-md-6">
             <div class="card card-primary">
                 <div class="card-header">
-                    <h3 class="card-title">Lleno los datos del formulario</h3>
+                    <h3 class="card-title">Llene los datos del formulario</h3>
                     <!-- /.card-tools -->
                 </div>
                 <!-- /.card-header -->
@@ -41,6 +41,21 @@
                                 </div>
                             </div>
                         </div>
+
+            <div class="form-group">
+                <label for="docente_id">Docente que dicta la materia</label>
+                <select name="docente_id" id="docente_id" class="form-control" required>
+                    <option value="">Seleccione un docente</option>
+                    @foreach($docentes as $docente)
+                        <option value="{{ $docente->id }}">
+                            {{ $docente->nombre }} {{ $docente->apellido }}
+                        </option>
+                    @endforeach
+                </select>
+            </div>
+
+
+
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="form-group">
@@ -57,6 +72,9 @@
                                 </div>
                             </div>
                         </div>
+
+
+
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="form-group">
@@ -73,6 +91,26 @@
                                 </div>
                             </div>
                         </div>
+
+            <div class="form-group">
+    <label for="anio">Año al que pertenece la materia</label><b>(*)</b>
+    <select name="anio" id="anio" class="form-control" required>
+        <option value="">Seleccione una opción...</option>
+        <option value="1er Año">1er Año</option>
+        <option value="2do Año">2do Año</option>
+        <option value="3er Año">3er Año</option>
+        <option value="1er Semestre">1er Semestre</option>
+        <option value="2do Semestre">2do Semestre</option>
+        <option value="3er Semestre">3er Semestre</option>
+        <option value="4to Semestre">4to Semestre</option>
+        <option value="5to Semestre">5to Semestre</option>
+        <option value="6to Semestre">6to Semestre</option>
+    </select>
+    @error('anio')
+    <small style="color: red">{{ $message }}</small>
+    @enderror
+</div>
+
                         <hr>
                         <div class="row">
                             <div class="col-md-12">
